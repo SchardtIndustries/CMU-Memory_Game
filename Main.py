@@ -190,6 +190,7 @@ def drawTitleAndInstructions(app):
     drawLabel('Memory Game', app.width/2, 20, size=16, bold=True)
     drawLabel('Click to match numbers (ignore colors)', app.width/2, 40, size=16)
     drawLabel('Press 1-5 for a new game at that level!', app.width/2, 60, size=16)
+    drawLabel("Press 'h' for a hint (reveals all numbers briefly)", app.width/2, 80, size=16)
     drawLabel(f'Level: {app.level}', 50, 20, size=16)
     drawLabel(f'Time: {app.gameTimer:.1f}', app.width - 50, 20, size=16)
     drawLabel(f'Hints Used: {app.hintCount}', app.width - 50, 40, size=16)
@@ -207,11 +208,11 @@ def drawDots(app):
 def youWinScreen(app):
     if len(app.dots) == 0:
         drawRect(0, 0, app.width, app.height, fill='lightgreen')
-        drawLabel('You Win!', app.width/2, app.height/2 - 60, size=32, bold=True)
+        drawLabel('You Win!', app.width/2, app.height/2 - 20, size=32, bold=True)
         finalScore = app.score - (app.hintCount * 5) - (app.guessCount * 2) - int(app.gameTimer)
-        drawLabel(f'Final Score: {finalScore}', app.width/2, app.height/2 - 20, size=24)
-        drawLabel(f'Final Score Calculated as:', app.width/2, app.height/2, size=18)
-        drawLabel(f'Score - (Hints Used * 5) - (Guesses * 2) - Time', app.width/2, app.height/2 + 20, size=18)
+        drawLabel(f'Final Score: {finalScore}', app.width/2, app.height/2 + 20, size=24)
+        drawLabel(f'Final Score Calculated as:', app.width/2, app.height/2 + 50, size=18)
+        drawLabel(f'Score - (Hints Used * 5) - (Guesses * 2) - Time', app.width/2, app.height/2 + 80, size=18)
 
 def main():
     runApp()
