@@ -29,6 +29,14 @@ Clone or download the project files.
 Open a terminal/command prompt.
 Navigate to the project directory.
 
-Run the game:
+Run the game from a code editor:
 
-Main.py
+python3 Main.py
+
+Run the game as an .exe:
+
+download the repo from github at https://github.com/SchardtIndustries/CMU-Memory_Game
+
+open the folder CMU-Memory_Game
+open the dist folder
+run Main.exe
