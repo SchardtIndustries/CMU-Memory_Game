@@ -1,10 +1,3 @@
-"""
-add a hint feature
-add a high score counter
-add a you win screen
-calculate final score based on time, hints used, and guesses
-"""
-
 from cmu_graphics import *
 from types import SimpleNamespace
 import random
@@ -34,6 +27,8 @@ def onAppStart(app):
     app.height = 600
     app.r = 20
     app.delayTime = 0.5 # seconds
+    app.delayHintTime = 2 # seconds
+    app.inHint = False
     app.inDelay = False
     app.timerStarted = False
     app.guessCount = 0
@@ -109,6 +104,8 @@ def onMousePress(app, mouseX, mouseY):
             app.timerStarted = True
     if app.inDelay:
         return
+    if app.inHint:
+        return
     dot = findDot(app, mouseX, mouseY)
     if dot is not None:
         if dot in app.selectedDots:
@@ -119,9 +116,12 @@ def onMousePress(app, mouseX, mouseY):
             startDelay(app)
 
 def startDelay(app):
+    app.inHint = True
+    app.delayHintStartTime = time.time()
+
+def startDelay(app):
     app.inDelay = True
     app.delayStartTime = time.time()
-
 
 def checkSelectedDots(app):
     assert len(app.selectedDots) == 2
@@ -144,13 +144,17 @@ def dotContainsPoint(dot, x, y):
 
 def onStep(app):
     if app.timerStarted:
-        app.gameTimer += .028
+        app.gameTimer += .025
     if len(app.dots) == 0:
         app.timerStarted = False
     if getattr(app, 'newHighScoreAchieved', False):
                 app.highScore = loadHighScore()  # reload from file
                 # Reset the flag
                 app.newHighScoreAchieved = False
+    if app.inHint:
+        elapsedTime = time.time() - app.delayHintStartTime
+        if elapsedTime >= app.delayHintTime:
+            app.inHint = False
     if app.inDelay:
         elapsedTime = time.time() - app.delayStartTime
         if elapsedTime >= app.delayTime:
@@ -161,13 +165,10 @@ def onStep(app):
     else:
         pass
 
-
-
 def onKeyPress(app, key):
     if app.inDelay == True:
         return
     if key == 'h':
-        app.hintCount += 1
         hintFeature(app)
     if key in '12345':
         level = int(key)
@@ -178,6 +179,11 @@ def redrawAll(app):
     drawDots(app)
     if getattr(app, 'gameWon', False):
         youWinScreen(app)
+
+def hintFeature(app):
+    app.hintCount += 1
+    app.inHint = True
+    app.delayHintStartTime = time.time()
 
 
 def drawTitleAndInstructions(app):
@@ -195,17 +201,17 @@ def drawTitleAndInstructions(app):
 def drawDots(app):
     for dot in app.dots:
         drawCircle(dot.cx, dot.cy, dot.radius, fill=dot.color, border='black', borderWidth=2)
-        if dot in app.selectedDots:
+        if app.inHint or dot in app.selectedDots:
             drawLabel(str(dot.number), dot.cx, dot.cy, size=12, bold=True, fill='white')
 
 def youWinScreen(app):
     if len(app.dots) == 0:
         drawRect(0, 0, app.width, app.height, fill='lightgreen')
-        drawLabel('You Win!', app.width/2, app.height/2 - 20, size=32, bold=True)
-        finalScore = max(0, app.score - (app.hintCount * 5) - (app.guessCount * 2) - int(app.gameTimer))
-        drawLabel(f'Final Score: {finalScore}', app.width/2, app.height/2 + 20, size=24)
-
-
+        drawLabel('You Win!', app.width/2, app.height/2 - 60, size=32, bold=True)
+        finalScore = app.score - (app.hintCount * 5) - (app.guessCount * 2) - int(app.gameTimer)
+        drawLabel(f'Final Score: {finalScore}', app.width/2, app.height/2 - 20, size=24)
+        drawLabel(f'Final Score Calculated as:', app.width/2, app.height/2, size=18)
+        drawLabel(f'Score - (Hints Used * 5) - (Guesses * 2) - Time', app.width/2, app.height/2 + 20, size=18)
 
 def main():
     runApp()
