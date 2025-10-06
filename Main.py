@@ -4,7 +4,6 @@ import random
 import time
 import json
 
-
 HIGH_SCORE_FILE = "highscore.json"
 
 def saveHighScore(score):
@@ -116,10 +115,6 @@ def onMousePress(app, mouseX, mouseY):
             startDelay(app)
 
 def startDelay(app):
-    app.inHint = True
-    app.delayHintStartTime = time.time()
-
-def startDelay(app):
     app.inDelay = True
     app.delayStartTime = time.time()
 
@@ -148,8 +143,7 @@ def onStep(app):
     if len(app.dots) == 0:
         app.timerStarted = False
     if getattr(app, 'newHighScoreAchieved', False):
-                app.highScore = loadHighScore()  # reload from file
-                # Reset the flag
+                app.highScore = loadHighScore()
                 app.newHighScoreAchieved = False
     if app.inHint:
         elapsedTime = time.time() - app.delayHintStartTime
@@ -184,7 +178,6 @@ def hintFeature(app):
     app.hintCount += 1
     app.inHint = True
     app.delayHintStartTime = time.time()
-
 
 def drawTitleAndInstructions(app):
     drawLabel('Memory Game', app.width/2, 20, size=16, bold=True)
