@@ -98,7 +98,6 @@ def makeDot(cx, cy, r, color, number):
 
 def onMousePress(app, mouseX, mouseY):
     if not hasattr(app, 'timerStarted') or not app.timerStarted:
-            # Start the timer here
             app.timerStartTime = time.time()
             app.timerStarted = True
     if app.inDelay:
